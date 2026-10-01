@@ -1,0 +1,242 @@
+<title>When Difficult Messages Do Not Land</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: one scrolling page, a section per slide, sticky progress nav; navy/gold/teal from the deck */
+:root{
+  --bg:#f6f8fa; --surface:#ffffff; --fg:#172a3a; --muted:#5a6772; --line:#d7dde1;
+  --navy:#0a2b50; --gold:#b97d0f; --gold-bright:#d99a25; --teal:#2b6b69; --hero-fg:#ffffff;
+  --tint-gold:#fbf1de; --tint-teal:#e3f0ef; --tint-navy:#e6ecf4;
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --body:'Source Sans 3',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1a2a; --surface:#13263a; --fg:#e8eef3; --muted:#9fb0bd; --line:#26405a;
+  --navy:#0a2b50; --gold:#e3a936; --gold-bright:#e3a936; --teal:#6dbab6;
+  --tint-gold:#2a2415; --tint-teal:#13302f; --tint-navy:#162f4b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1a2a; --surface:#13263a; --fg:#e8eef3; --muted:#9fb0bd; --line:#26405a;
+  --navy:#0a2b50; --gold:#e3a936; --gold-bright:#e3a936; --teal:#6dbab6;
+  --tint-gold:#2a2415; --tint-teal:#13302f; --tint-navy:#162f4b; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:18px;line-height:1.55;margin:0}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
+.wrap{max-width:62rem;margin-inline:auto;padding-inline:16px}
+
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--navy);color:#fff}
+nav .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:8px;scrollbar-width:none}
+nav a{flex:none;text-decoration:none;font-size:14px;font-weight:600;padding:6px 12px;border-radius:999px;color:#c9d6e4;white-space:nowrap}
+nav a:hover,nav a.on{background:rgba(255,255,255,.14);color:#fff}
+
+header.hero{background:var(--navy);color:var(--hero-fg);padding-block:clamp(56px,10vw,112px)}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+header .eyebrow{color:#e3a936}
+.hero h1{font-size:clamp(2.4rem,7vw,4.6rem);font-weight:700;letter-spacing:-.01em}
+.hero .sub{font-size:clamp(1.1rem,2.4vw,1.4rem);max-width:36rem;margin-top:22px;color:#d4deea}
+.hero .meta{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:36px;font-size:15px;color:#a9bbcf}
+.hero .meta strong{color:#e3a936}
+
+section{padding-block:clamp(44px,7vw,80px);scroll-margin-top:52px}
+section:nth-of-type(even){background:var(--surface);border-block:1px solid var(--line)}
+section h2{font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;margin-bottom:10px}
+.lede{color:var(--muted);font-size:1.1rem;margin-bottom:32px;max-width:40rem}
+section h2:last-child{margin-bottom:0}
+
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:24px}
+section:nth-of-type(even) .card{background:var(--bg)}
+.card h3{font-size:1.2rem;margin-bottom:12px}
+.card.strength{background:var(--tint-teal)!important;border-color:transparent}
+.card.strength h3{color:var(--teal)}
+.card.gap{background:var(--tint-gold)!important;border-color:transparent}
+.card.gap h3{color:var(--gold)}
+ul.plain{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+ul.plain li{padding-left:22px;position:relative}
+ul.plain li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.55}
+
+.warning{margin-top:20px;background:var(--navy);color:#fff;border-radius:6px;padding:28px}
+.warning .eyebrow{color:#e3a936;margin-bottom:8px}
+.warning p+p{margin-top:12px;color:#d4deea}
+.warning p:first-of-type{font-size:1.25rem;font-family:var(--display)}
+
+.reasons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.reason{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;padding:22px;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.reason .n{grid-row:span 2;font-family:var(--display);font-size:2.4rem;font-weight:700;color:var(--gold);line-height:1}
+.reason h3{font-size:1.2rem}
+.reason p{color:var(--muted)}
+
+.callout{margin-top:28px;padding:22px 26px;background:var(--tint-gold);border-radius:6px;font-family:var(--display);font-size:1.3rem;font-weight:600;color:var(--fg)}
+.callout.teal{background:var(--tint-teal)}
+.callout.navy{background:var(--tint-navy)}
+.quote{margin:28px 0 0;padding:26px 28px;background:var(--navy);color:#fff;border-radius:6px;font-family:var(--display);font-size:clamp(1.1rem,2.4vw,1.45rem);line-height:1.4}
+.note{margin-top:20px;color:var(--muted);font-size:16px;max-width:44rem}
+
+ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+ol.steps li{display:grid;grid-template-columns:2.2rem 1fr;gap:14px;align-items:start}
+ol.steps b{display:grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--navy);color:#fff;font-size:15px}
+
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.step{padding:22px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.step .n{display:inline-grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--gold-bright);color:#172a3a;font-weight:700;margin-bottom:12px}
+.step h3{font-size:1.2rem;margin-bottom:6px}
+.step p{color:var(--muted)}
+.step.say{background:var(--tint-teal);border-color:transparent}
+.step.say p{color:var(--fg);font-style:italic}
+
+.say-block{display:grid;gap:12px}
+.say-block blockquote{margin:0;padding:18px 22px;border-radius:6px;background:var(--bg);border:1px solid var(--line);font-size:1.05rem}
+.say-block.dignity blockquote{background:var(--tint-teal);border-color:transparent}
+.col-title{font-family:var(--display);font-size:1.35rem;font-weight:700;margin-bottom:14px}
+
+.q{display:flex;flex-direction:column;gap:6px}
+.q .tag{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal)}
+.q p{font-family:var(--display);font-size:1.15rem;font-weight:600;line-height:1.3}
+
+.outcomes{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:10px}
+.outcomes li{display:grid;grid-template-columns:2rem 1fr;gap:12px;align-items:center;padding:14px 18px;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.outcomes svg{width:2rem;height:2rem}
+
+footer{background:var(--navy);color:#a9bbcf;padding-block:32px;font-size:15px}
+
+@media (max-width:760px){
+  .grid2,.grid3,.reasons,.flow{grid-template-columns:minmax(0,1fr)}
+  body{font-size:17px}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+<nav aria-label="Sections"><div class="wrap">
+  <a href="#case">The case</a><a href="#diagnose">Diagnose</a><a href="#anchor">Anchor</a>
+  <a href="#flow">Conversation</a><a href="#dialogue">Dialogue</a><a href="#listen">Listen</a><a href="#takeaway">Takeaway</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">HR workshop</div>
+  <h1>When difficult messages do not land</h1>
+  <p class="sub">A practical approach to career engagement using SJS expectations.</p>
+  <div class="meta"><span><strong>Case study</strong> &ldquo;The message that never landed&rdquo;</span><span>Workshop sharing page</span></div>
+</div></header>
+
+<main>
+<section id="case"><div class="wrap">
+  <div class="eyebrow">Case study 3</div>
+  <h2>The case in one minute</h2>
+  <p class="lede">Meet Susie, 18 months into a Manager role.</p>
+  <div class="grid2">
+    <div class="card strength"><h3>What Susie brings</h3>
+      <ul class="plain"><li>Dedicated and committed</li><li>Strong technical knowledge</li><li>Well-liked by colleagues</li><li>Reliable in routine operations</li><li>Positive attitude towards learning</li></ul></div>
+    <div class="card gap"><h3>Where the role fit breaks down</h3>
+      <ul class="plain"><li>Not yet independent at grade</li><li>Needs frequent direction and reassurance</li><li>Struggles with strategy and prioritisation</li><li>Low confidence in leading and influencing</li><li>Support has not produced lasting change</li></ul></div>
+  </div>
+  <div class="warning">
+    <div class="eyebrow">The warning signal</div>
+    <p>After 18 months, Susie still relies on the RO for decisions and does not know that regrading is being considered.</p>
+    <p>The message was softened until it was no longer clear. The problem is not the existence of a difficult message. It is the gap between what the RO intended and what Susie understood.</p>
+  </div>
+</div></section>
+
+<section id="diagnose"><div class="wrap">
+  <div class="eyebrow">Diagnose</div>
+  <h2>Why the message did not land</h2>
+  <p class="lede">Four things went wrong, in order of how often they happen.</p>
+  <div class="reasons">
+    <div class="reason"><span class="n">1</span><h3>Hints replaced clarity</h3><p>Development feedback was phrased too gently, so the seriousness was lost.</p></div>
+    <div class="reason"><span class="n">2</span><h3>Support was mistaken for progress</h3><p>Training and reduced workload continued, but the gap was not reframed explicitly.</p></div>
+    <div class="reason"><span class="n">3</span><h3>No shared reference point</h3><p>The discussion was not visibly anchored to grade-level role expectations.</p></div>
+    <div class="reason"><span class="n">4</span><h3>No understanding check</h3><p>The RO did not ask Susie to explain what the feedback meant for the role.</p></div>
+  </div>
+  <div class="callout">Kindness without clarity can create false reassurance.</div>
+</div></section>
+
+<section id="anchor"><div class="wrap">
+  <div class="eyebrow">Anchor on expectations</div>
+  <h2>Use SJS as the common language</h2>
+  <p class="lede">Shift from personal judgement to role alignment.</p>
+  <div class="card"><ol class="steps">
+    <li><b>1</b><span>Identify the relevant grade-level SJS expectations.</span></li>
+    <li><b>2</b><span>Compare expectations with observable work examples.</span></li>
+    <li><b>3</b><span>Describe the consistency and independence required at grade.</span></li>
+    <li><b>4</b><span>Agree on what meeting the role looks like in practice.</span></li>
+  </ol></div>
+  <p class="quote">&ldquo;This is not about your worth. It is about whether the current work pattern consistently meets the scope and independence expected at this grade.&rdquo;</p>
+  <p class="note">SJS supports consistency, but judgement should still consider context, evidence and the person&rsquo;s circumstances.</p>
+</div></section>
+
+<section id="flow"><div class="wrap">
+  <div class="eyebrow">Engage with clarity and care</div>
+  <h2>A six-step conversation flow</h2>
+  <p class="lede">Follow the order. Each step makes the next one easier to hear.</p>
+  <div class="flow">
+    <div class="step say"><span class="n">1</span><h3>Set intent</h3><p>&ldquo;I want an honest discussion about role expectations and your career.&rdquo;</p></div>
+    <div class="step"><span class="n">2</span><h3>Recognise strengths</h3><p>Acknowledge contribution without using praise to hide the message.</p></div>
+    <div class="step"><span class="n">3</span><h3>Show the evidence</h3><p>Connect SJS expectations to specific, repeated work examples.</p></div>
+    <div class="step"><span class="n">4</span><h3>State the message</h3><p>Say clearly that current performance is not consistently at grade.</p></div>
+    <div class="step"><span class="n">5</span><h3>Pause and listen</h3><p>Invite response, acknowledge impact and check understanding.</p></div>
+    <div class="step"><span class="n">6</span><h3>Agree the path</h3><p>Explain decisions, support, next steps and career options.</p></div>
+  </div>
+</div></section>
+
+<section id="dialogue"><div class="wrap">
+  <div class="eyebrow">Suggested dialogue</div>
+  <h2>What can the RO actually say?</h2>
+  <p class="lede">Wording you can adapt. Keep the meaning, change the voice.</p>
+  <div class="grid2">
+    <div><div class="col-title">Clear and respectful</div><div class="say-block">
+      <blockquote>&ldquo;Susie, I value your commitment, technical knowledge and reliability. I also need to be clear about the Manager role.&rdquo;</blockquote>
+      <blockquote>&ldquo;Based on the SJS expectations and the work examples we have reviewed, you are not yet consistently performing independently at the Manager grade.&rdquo;</blockquote>
+      <blockquote>&ldquo;Despite the support provided, this gap has not become sustainable. Management and HR have therefore decided to regrade the role.&rdquo;</blockquote></div></div>
+    <div><div class="col-title">Then preserve dignity and agency</div><div class="say-block dignity">
+      <blockquote>&ldquo;I recognise this is difficult news, and I want to give you time to respond.&rdquo;</blockquote>
+      <blockquote>&ldquo;This decision does not erase your strengths or contribution.&rdquo;</blockquote>
+      <blockquote>&ldquo;Let us discuss where your strengths can be best applied, what support is available, and what a successful career path could look like from here.&rdquo;</blockquote></div></div>
+  </div>
+</div></section>
+
+<section id="listen"><div class="wrap">
+  <div class="eyebrow">Listen and check understanding</div>
+  <h2>Questions that turn the talk into engagement</h2>
+  <p class="lede">Six prompts for the pause after the message.</p>
+  <div class="grid3">
+    <div class="card q"><span class="tag">Reflect</span><p>How do you assess your performance against the Manager SJS?</p></div>
+    <div class="card q"><span class="tag">Explore</span><p>Which parts of the role energise you, and which require sustained support?</p></div>
+    <div class="card q"><span class="tag">Surface</span><p>What feedback have you heard repeatedly over the past year?</p></div>
+    <div class="card q"><span class="tag">Understand</span><p>What is your understanding of the message I have shared today?</p></div>
+    <div class="card q"><span class="tag">Career</span><p>Would a specialist, technical or project pathway better use your strengths?</p></div>
+    <div class="card q"><span class="tag">Support</span><p>What support would help you transition successfully from here?</p></div>
+  </div>
+  <div class="callout navy">Do not ask questions that reopen a decision already made. Be transparent about what is decided and what remains open for discussion.</div>
+</div></section>
+
+<section id="takeaway"><div class="wrap">
+  <div class="eyebrow">Key takeaway</div>
+  <h2>Close with truth, dignity and a path forward</h2>
+  <p class="lede">The conversation succeeds when Susie leaves with:</p>
+  <ul class="outcomes">
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>A clear understanding of the performance gap</li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>The decision and its rationale</li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Recognition of strengths and contribution</li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>A defined support and transition plan</li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>A credible view of future career options</li>
+  </ul>
+  <p class="quote">Kindness is not avoiding the difficult message. Kindness is delivering it clearly, respectfully and early enough for the staff member to respond.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap">When difficult messages do not land &middot; HR workshop sharing page</div></footer>
+
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('nav a'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+  function update(){
+    var y=window.scrollY+120,cur=-1;
+    secs.forEach(function(s,i){if(s&&s.offsetTop<=y)cur=i});
+    links.forEach(function(a,i){a.classList.toggle('on',i===cur)});
+    if(cur>=0)links[cur].scrollIntoView({block:'nearest',inline:'nearest'});
+  }
+  window.addEventListener('scroll',update,{passive:true});update();
+})();
+</script>
