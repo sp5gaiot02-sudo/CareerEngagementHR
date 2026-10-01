@@ -1,0 +1,346 @@
+<title>EnABLE and GROW Workshop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: full-height presenter deck, one slide per view, bottom control bar; navy/gold/teal from the source deck */
+:root{
+  --bg:#f4f7fa; --surface:#ffffff; --fg:#172a3a; --muted:#52606c; --line:#d3dbe1;
+  --navy:#0a2b50; --gold:#a8710c; --gold-b:#d99a25; --teal:#2b6b69; --on-navy:#ffffff;
+  --t-gold:#fbf0da; --t-teal:#e1efee; --t-navy:#e4ebf3;
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --body:'Source Sans 3',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b1928; --surface:#122436; --fg:#e8eef3; --muted:#a3b3bf; --line:#27415a;
+  --gold:#e3a936; --gold-b:#e3a936; --teal:#72c0bb;
+  --t-gold:#2b2515; --t-teal:#122f2e; --t-navy:#16304b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1928; --surface:#122436; --fg:#e8eef3; --muted:#a3b3bf; --line:#27415a;
+  --gold:#e3a936; --gold-b:#e3a936; --teal:#72c0bb;
+  --t-gold:#2b2515; --t-teal:#122f2e; --t-navy:#16304b; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:clamp(16px,1.6vw,21px);line-height:1.5;overflow:hidden}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{font-family:var(--display);line-height:1.12;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold-b);outline-offset:2px}
+
+#app{height:100%;display:flex;flex-direction:column}
+#stage{flex:1;min-height:0;position:relative}
+.slide{position:absolute;inset:0;overflow-y:auto;padding:clamp(20px,4vw,56px) 16px;display:none}
+.slide.on{display:block}
+.inner{max-width:72rem;margin-inline:auto;min-height:100%;display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,2.2vw,26px)}
+.eyebrow{font-size:.7em;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+h2{font-size:clamp(1.9rem,4.6vw,3.2rem);font-weight:700}
+.sub{color:var(--muted);font-size:1.05em;max-width:44rem}
+
+/* title + closing slides */
+.slide.dark{background:var(--navy);color:var(--on-navy)}
+.slide.dark .eyebrow{color:#e3a936}
+.slide.dark .sub{color:#c4d2e1}
+.slide.dark h1{font-size:clamp(2.4rem,7.4vw,5.4rem);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.12);font-size:.8em;color:#e3ecf5}
+.start{align-self:flex-start;margin-top:8px;background:#e3a936;color:#172a3a;border:0;border-radius:6px;padding:12px 24px;font-weight:700}
+.start:hover{background:#f0b94d}
+
+/* cards */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:clamp(16px,2vw,26px)}
+.card h3{font-size:1.2em;margin-bottom:10px}
+.card.teal{background:var(--t-teal);border-color:transparent}
+.card.teal h3{color:var(--teal)}
+.card.gold{background:var(--t-gold);border-color:transparent}
+.card.gold h3{color:var(--gold)}
+ul.dots{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+ul.dots li{padding-left:20px;position:relative}
+ul.dots li::before{content:"";position:absolute;left:0;top:.6em;width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.5}
+
+/* reveal / interactive */
+.reveal{width:100%;text-align:left;border:2px dashed var(--line);border-radius:8px;background:transparent;padding:clamp(16px,2vw,24px);display:block}
+.reveal:hover{border-color:var(--gold-b)}
+.reveal .hint{color:var(--muted);font-weight:600}
+.reveal .body{display:none}
+.reveal.open{background:var(--navy);border:2px solid var(--navy);color:#fff}
+.reveal.open .hint{display:none}
+.reveal.open .body{display:block}
+.reveal .big{font-family:var(--display);font-size:1.3em;font-weight:600}
+.reveal .body p+p{margin-top:8px;color:#c4d2e1}
+
+.tabs{display:flex;flex-wrap:wrap;gap:10px}
+.tab{display:flex;align-items:center;gap:10px;background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:10px 16px;font-weight:700;text-align:left}
+.tab .k{display:grid;place-items:center;min-width:2.2em;height:2.2em;padding-inline:6px;border-radius:6px;background:var(--navy);color:#fff;font-family:var(--display);font-size:1.05em}
+.tab[aria-selected="true"]{border-color:var(--gold-b);background:var(--t-gold)}
+.tab[aria-selected="true"] .k{background:var(--gold-b);color:#172a3a}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:clamp(18px,2.6vw,34px);min-height:9rem}
+.panel h3{font-size:clamp(1.4rem,2.8vw,2rem);margin-bottom:10px}
+.panel p{font-size:1.1em;max-width:46rem}
+.panel .ask{margin-top:16px;padding:14px 18px;background:var(--t-teal);border-radius:6px;font-weight:600}
+.panel .ask span{display:block;font-size:.72em;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+.callout{padding:16px 22px;border-radius:8px;background:var(--t-gold);font-family:var(--display);font-weight:600;font-size:1.15em}
+.callout.navy{background:var(--navy);color:#fff}
+.callout.blue{background:var(--t-navy)}
+.small{font-size:.85em;color:var(--muted)}
+
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:8px;overflow:hidden;align-self:flex-start}
+.seg button{border:0;background:var(--surface);padding:8px 18px;font-weight:700}
+.seg button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.say{margin:0;padding:14px 20px;border-radius:8px;background:var(--surface);border:1px solid var(--line);font-size:1.05em}
+.say.t{background:var(--t-teal);border-color:transparent}
+.toggle{display:flex;align-items:center;gap:10px;background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:10px 16px;font-weight:700;align-self:flex-start}
+.toggle[aria-pressed="true"]{border-color:var(--teal);background:var(--t-teal)}
+.toggle i{width:2.4em;height:1.3em;border-radius:99px;background:var(--line);position:relative;flex:none}
+.toggle i::after{content:"";position:absolute;top:.15em;left:.15em;width:1em;height:1em;border-radius:50%;background:#fff;transition:left .15s}
+.toggle[aria-pressed="true"] i{background:var(--teal)}
+.toggle[aria-pressed="true"] i::after{left:1.25em}
+.flowrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-weight:700}
+.flowrow span{padding:6px 14px;border-radius:999px;background:var(--navy);color:#fff}
+.flowrow em{font-style:normal;color:var(--muted)}
+
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.checks button{width:100%;display:grid;grid-template-columns:2.2em 1fr;gap:14px;align-items:center;text-align:left;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);border-radius:8px;padding:14px 18px;color:#fff}
+.checks .box{display:grid;place-items:center;width:2em;height:2em;border-radius:50%;border:2px solid #e3a936}
+.checks svg{width:1.2em;height:1.2em;opacity:0}
+.checks button[aria-pressed="true"]{background:rgba(227,169,54,.18);border-color:#e3a936}
+.checks button[aria-pressed="true"] .box{background:#e3a936}
+.checks button[aria-pressed="true"] svg{opacity:1}
+
+/* control bar */
+#bar{flex:none;display:flex;align-items:center;gap:8px;background:var(--navy);color:#fff;padding:8px 16px calc(8px + env(safe-area-inset-bottom,0px))}
+#bar button{background:rgba(255,255,255,.12);border:0;border-radius:6px;color:#fff;padding:8px 14px;font-weight:700;font-size:.85em}
+#bar button:hover{background:rgba(255,255,255,.24)}
+#bar button:disabled{opacity:.35;cursor:default}
+#title{flex:1;min-width:0;font-size:.85em;color:#c4d2e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#dots{display:flex;gap:6px;align-items:center}
+#dots button{padding:0;width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.3)}
+#dots button[aria-current="true"]{background:#e3a936;transform:scale(1.25)}
+#count{font-variant-numeric:tabular-nums;font-size:.85em;color:#c4d2e1;min-width:3.2em;text-align:right}
+.hide-sm{display:inline}
+@media (max-width:760px){
+  .g2,.g3{grid-template-columns:minmax(0,1fr)}
+  #dots,.hide-sm{display:none}
+  body{overflow:auto}
+}
+@media (prefers-reduced-motion:no-preference){.slide.on .inner{animation:in .35s ease-out}}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+
+<div id="app">
+<main id="stage">
+
+<!-- 1 -->
+<section class="slide dark" data-title="Welcome"><div class="inner">
+  <div class="eyebrow">Career guidance workshop</div>
+  <h1>When difficult messages do not land</h1>
+  <p class="sub">Using EnABLE to guide the conversation and GROW to agree actions.</p>
+  <div class="chips"><span class="chip">Case study: &ldquo;The message that never landed&rdquo;</span><span class="chip">Anchored on SJS-specific job scope</span></div>
+  <button class="start" data-next>Start the workshop</button>
+</div></section>
+
+<!-- 2 -->
+<section class="slide" data-title="The case"><div class="inner">
+  <div class="eyebrow">Case study 3</div>
+  <h2>The case and the conversation gap</h2>
+  <div class="grid g2">
+    <div class="card teal"><h3>Strengths to recognise</h3><ul class="dots"><li>Dedicated and committed</li><li>Strong technical knowledge</li><li>Well-liked by colleagues</li><li>Reliable in routine operations</li><li>Positive towards learning</li></ul></div>
+    <div class="card gold"><h3>SJS gap to clarify</h3><ul class="dots"><li>Independence at grade</li><li>Strategic thinking and prioritisation</li><li>Leading and influencing</li><li>Operating with less direction</li><li>Sustaining improvement over time</li></ul></div>
+  </div>
+  <button class="reveal" aria-expanded="false"><span class="hint">Discuss with the room: what did not land? Click to reveal.</span>
+    <span class="body"><p class="big">The RO intended concern. Susie heard reassurance.</p><p>Support was provided, but the message was softened. Susie remained unaware that the role fit and grade were under review.</p></span></button>
+  <p class="small">The aim is not to label the person. It is to create a shared, evidence-based understanding of role expectations and next steps.</p>
+</div></section>
+
+<!-- 3 -->
+<section class="slide" data-title="Pre-work: PRE"><div class="inner">
+  <div class="eyebrow">Pre-work with SJS</div>
+  <h2>Prepare before the conversation</h2>
+  <div class="tabs" role="tablist" data-tabs>
+    <button class="tab" role="tab" data-k="P"  data-h="Position" data-p="Clarify organisational needs, the relevant grade and the SJS expectations for the Manager role."><span class="k">P</span>Position</button>
+    <button class="tab" role="tab" data-k="R"  data-h="Review"   data-p="Gather specific examples, support already provided, outcomes, strengths and relevant context."><span class="k">R</span>Review</button>
+    <button class="tab" role="tab" data-k="E"  data-h="Explore"  data-p="Identify realistic pathways, development support and decisions that are open or already made."><span class="k">E</span>Explore</button>
+  </div>
+  <div class="panel" data-panel></div>
+  <div class="callout">Preparation prevents surprises, vague promises and improvised judgement.</div>
+</div></section>
+
+<!-- 4 -->
+<section class="slide" data-title="EnABLE"><div class="inner">
+  <div class="eyebrow">Guide with clarity and care</div>
+  <h2>EnABLE: the structure for the conversation</h2>
+  <div class="tabs" role="tablist" data-tabs>
+    <button class="tab" role="tab" data-h="Engage" data-p="Build trust with care, clarity and a clear purpose." data-ask="What would make the opening feel safe and honest for the staff member?"><span class="k">En</span>Engage</button>
+    <button class="tab" role="tab" data-h="Actively listen &amp; look" data-p="Hear the staff view; examine behaviours, outputs and repeated patterns." data-ask="What evidence would you want in front of you before you listen?"><span class="k">A</span>Listen &amp; look</button>
+    <button class="tab" role="tab" data-h="Build a SMART plan to GROW" data-p="Translate the discussion into Goals, Reality, Options and Way forward." data-ask="Which part of a plan do staff most often leave vague?"><span class="k">B</span>Build a plan</button>
+    <button class="tab" role="tab" data-h="Loop back with CAST" data-p="Give feedback that is Constructive, Actionable, Specific and Timely." data-ask="Think of feedback you gave recently. Which CAST letter was weakest?"><span class="k">L</span>Loop back</button>
+    <button class="tab" role="tab" data-h="Enable" data-p="Provide protected development time and proactive access to opportunities." data-ask="What would protected development time look like in your team?"><span class="k">E</span>Enable</button>
+  </div>
+  <div class="panel" data-panel></div>
+</div></section>
+
+<!-- 5 -->
+<section class="slide" data-title="Conversation: En + A"><div class="inner">
+  <div class="eyebrow">Conversation example</div>
+  <h2>En + A: open clearly, then listen</h2>
+  <div class="seg" role="group" aria-label="Phase" data-seg>
+    <button aria-pressed="true" data-show="en">En &middot; Engage to build trust</button>
+    <button aria-pressed="false" data-show="a">A &middot; Actively listen and look</button>
+  </div>
+  <div class="grid" data-pane="en">
+    <p class="say t">&ldquo;Susie, I want us to have an honest discussion about the Manager role, your career and the support ahead.&rdquo;</p>
+    <p class="say t">&ldquo;I value your commitment, technical knowledge and reliability. I also need to be clear about the expectations of the grade and where there is a continuing gap.&rdquo;</p>
+    <p class="say t">&ldquo;Some decisions may already be determined, but I want to hear your perspective and discuss the way forward respectfully.&rdquo;</p>
+  </div>
+  <div class="grid" data-pane="a" hidden>
+    <p class="say">How do you assess your current work against the Manager SJS?</p>
+    <p class="say">Which expectations can you perform independently?</p>
+    <p class="say">Where do you still need regular direction?</p>
+    <p class="say">What feedback have you heard repeatedly?</p>
+    <div class="callout blue">Listen for the staff&rsquo;s understanding, evidence, concerns and aspirations.</div>
+  </div>
+</div></section>
+
+<!-- 6 -->
+<section class="slide" data-title="Anchor on SJS"><div class="inner">
+  <div class="eyebrow">Anchor on SJS</div>
+  <h2>Make the difficult message unmistakable</h2>
+  <p class="sub">Click to reveal one statement at a time, as the RO would say it.</p>
+  <div class="grid" data-steps>
+    <button class="reveal" aria-expanded="false"><span class="hint">1 &middot; The standard</span><span class="body"><p class="big">&ldquo;The Manager SJS requires consistent independence, prioritisation, leadership and influence at grade.&rdquo;</p></span></button>
+    <button class="reveal" aria-expanded="false"><span class="hint">2 &middot; The evidence</span><span class="body"><p class="big">&ldquo;Based on the work examples reviewed, these expectations are not yet being demonstrated consistently without significant RO direction.&rdquo;</p></span></button>
+    <button class="reveal" aria-expanded="false"><span class="hint">3 &middot; The support so far</span><span class="body"><p class="big">&ldquo;Despite the coaching, training and workload support provided, the improvement has not been sustained.&rdquo;</p></span></button>
+    <button class="reveal" aria-expanded="false"><span class="hint">4 &middot; The decision</span><span class="body"><p class="big">&ldquo;Management and HR have therefore decided to regrade the role.&rdquo;</p></span></button>
+  </div>
+  <p class="small">Use the approved SJS wording and actual evidence for the relevant grade. Be explicit about what is decided and what remains open.</p>
+</div></section>
+
+<!-- 7 -->
+<section class="slide" data-title="GROW"><div class="inner">
+  <div class="eyebrow">Build a SMART plan</div>
+  <h2>B: conclude with a GROW action plan</h2>
+  <button class="toggle" aria-pressed="false" data-pro><i></i>Performance issue: start with PRO-GROW</button>
+  <div class="flowrow" data-proflow hidden><span>Problem</span><em>state it</em><span>Response</span><em>understand it</em><span>Ownership</span><em>secure it</em><span>then GROW</span></div>
+  <div class="tabs" role="tablist" data-tabs>
+    <button class="tab" role="tab" data-h="Goals" data-p="What successful contribution should look like next, aligned to the appropriate SJS and career direction."><span class="k">G</span>Goals</button>
+    <button class="tab" role="tab" data-h="Reality" data-p="Current strengths, observable gaps, support already tried, constraints and the decision communicated."><span class="k">R</span>Reality</button>
+    <button class="tab" role="tab" data-h="Options" data-p="Suitable role pathways, scoped assignments, coaching, mentoring, training or transition support."><span class="k">O</span>Options</button>
+    <button class="tab" role="tab" data-h="Way forward" data-p="Who will do what, by when, what support is provided and when progress will be reviewed."><span class="k">W</span>Way forward</button>
+  </div>
+  <div class="panel" data-panel></div>
+</div></section>
+
+<!-- 8 -->
+<section class="slide" data-title="Sample GROW actions"><div class="inner">
+  <div class="eyebrow">From conversation to commitment</div>
+  <h2>Sample GROW actions linked to SJS</h2>
+  <div class="grid g2">
+    <div class="card"><h3>G &middot; Goal</h3><p>Agree the SJS-aligned scope in the revised role and identify 1&ndash;2 priority capabilities to strengthen.</p></div>
+    <div class="card"><h3>R &middot; Reality</h3><p>Document strengths, recurring gaps, examples, support already provided and the staff member&rsquo;s perspective.</p></div>
+    <div class="card"><h3>O &middot; Options</h3><p>Select appropriate support such as guided assignments, mentoring, coaching, formal learning or suitable pathways.</p></div>
+    <div class="card"><h3>W &middot; Way forward</h3><p>Record SMART actions, owners, evidence of progress and scheduled check-ins. Loop back using CAST.</p></div>
+  </div>
+  <div class="callout navy">Workshop principle: define actions together, but do not present a decided regrading outcome as negotiable.</div>
+</div></section>
+
+<!-- 9 -->
+<section class="slide dark" data-title="Key takeaway"><div class="inner">
+  <div class="eyebrow">Key takeaway</div>
+  <h2>Close with clarity, dignity and follow-through</h2>
+  <p class="sub">The staff member should leave knowing. Tick each one off as the group agrees.</p>
+  <ul class="checks" data-checks>
+    <li><button aria-pressed="false"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#172a3a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>What the SJS requires at the relevant grade</button></li>
+    <li><button aria-pressed="false"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#172a3a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>What the evidence shows and what decision was made</button></li>
+    <li><button aria-pressed="false"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#172a3a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>That strengths and contribution remain recognised</button></li>
+    <li><button aria-pressed="false"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#172a3a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>What GROW actions, support and check-ins follow</button></li>
+    <li><button aria-pressed="false"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#172a3a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>Which career pathways can be explored realistically</button></li>
+  </ul>
+  <div class="callout">EnABLE makes the conversation safe and clear. GROW turns clarity into shared, practical action.</div>
+</div></section>
+
+</main>
+
+<div id="bar">
+  <button id="prev" aria-label="Previous slide">&larr; <span class="hide-sm">Back</span></button>
+  <div id="title"></div>
+  <div id="dots" role="tablist" aria-label="Slides"></div>
+  <span id="count"></span>
+  <button id="ov" class="hide-sm" aria-label="Fullscreen">Fullscreen</button>
+  <button id="next" aria-label="Next slide"><span class="hide-sm">Next</span> &rarr;</button>
+</div>
+</div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide')),cur=0;
+  var dots=document.getElementById('dots'),title=document.getElementById('title'),count=document.getElementById('count');
+  var prev=document.getElementById('prev'),next=document.getElementById('next');
+  slides.forEach(function(s,i){
+    var b=document.createElement('button');b.setAttribute('aria-label','Go to slide '+(i+1)+': '+s.dataset.title);
+    b.onclick=function(){go(i)};dots.appendChild(b);
+  });
+  function go(i){
+    cur=Math.max(0,Math.min(slides.length-1,i));
+    slides.forEach(function(s,j){s.classList.toggle('on',j===cur)});
+    slides[cur].scrollTop=0;
+    [].forEach.call(dots.children,function(d,j){if(j===cur)d.setAttribute('aria-current','true');else d.removeAttribute('aria-current')});
+    title.textContent=slides[cur].dataset.title;
+    count.textContent=(cur+1)+' / '+slides.length;
+    prev.disabled=cur===0;next.disabled=cur===slides.length-1;
+    try{history.replaceState(null,'','#s'+(cur+1))}catch(e){}
+  }
+  prev.onclick=function(){go(cur-1)};next.onclick=function(){go(cur+1)};
+  document.querySelector('[data-next]').onclick=function(){go(cur+1)};
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    var k=e.key;
+    if(k==='ArrowRight'||k==='PageDown'){go(cur+1);e.preventDefault()}
+    else if(k==='ArrowLeft'||k==='PageUp'){go(cur-1);e.preventDefault()}
+    else if(k==='Home')go(0);else if(k==='End')go(slides.length-1);
+    else if(k==='f'||k==='F')fs();
+  });
+  function fs(){try{var p=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){})}catch(e){}}
+  document.getElementById('ov').onclick=fs;
+
+  // click-to-reveal blocks
+  [].forEach.call(document.querySelectorAll('.reveal'),function(b){
+    b.onclick=function(){var o=b.classList.toggle('open');b.setAttribute('aria-expanded',o)};
+  });
+
+  // letter tabs with detail panel
+  [].forEach.call(document.querySelectorAll('[data-tabs]'),function(group){
+    var panel=group.parentNode.querySelector('[data-panel]');
+    var tabs=[].slice.call(group.querySelectorAll('.tab'));
+    function pick(t){
+      tabs.forEach(function(x){x.setAttribute('aria-selected',x===t)});
+      var h=document.createElement('h3');h.innerHTML=t.dataset.h;
+      var p=document.createElement('p');p.innerHTML=t.dataset.p;
+      panel.innerHTML='';panel.appendChild(h);panel.appendChild(p);
+      if(t.dataset.ask){var a=document.createElement('div');a.className='ask';a.innerHTML='<span>Ask the room</span>'+t.dataset.ask;panel.appendChild(a)}
+    }
+    tabs.forEach(function(t){t.onclick=function(){pick(t)}});
+    pick(tabs[0]);
+  });
+
+  // En / A switch
+  var seg=document.querySelector('[data-seg]');
+  [].forEach.call(seg.querySelectorAll('button'),function(b){
+    b.onclick=function(){
+      [].forEach.call(seg.querySelectorAll('button'),function(x){x.setAttribute('aria-pressed',x===b)});
+      document.querySelector('[data-pane="en"]').hidden=b.dataset.show!=='en';
+      document.querySelector('[data-pane="a"]').hidden=b.dataset.show!=='a';
+    };
+  });
+
+  // PRO-GROW toggle
+  var pro=document.querySelector('[data-pro]'),flow=document.querySelector('[data-proflow]');
+  pro.onclick=function(){var on=pro.getAttribute('aria-pressed')!=='true';pro.setAttribute('aria-pressed',on);flow.hidden=!on};
+
+  // takeaway checklist
+  [].forEach.call(document.querySelectorAll('[data-checks] button'),function(b){
+    b.onclick=function(){b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true')};
+  });
+
+  var m=/^#s(\d+)$/.exec(location.hash);go(m?parseInt(m[1],10)-1:0);
+})();
+</script>
